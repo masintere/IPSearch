@@ -55,6 +55,11 @@ public class Controller extends BaseServlet{
 		
 	}
 	
+	/**
+	 * searches through the sql database to find the city and state that match the ip address
+	 * @param ipAddress ip address to search with
+	 * @return the city and state that match the ip address or if it is an invalid ip
+	 */
 	public String getIPAddress(String ipAddress){
 		db = new DBConnect();
 		con = db.connect();
@@ -78,6 +83,11 @@ public class Controller extends BaseServlet{
 		return "Invalid IP";
 	}
 	
+	/**
+	 * adds the correct number of 0's to the ip address so that there will be 3 characters in each segment of the ip
+	 * @param ipAddress
+	 * @return the corrected ip address
+	 */
 	public String parseIPAddress(String ipAddress){
 		String[] adress = ipAddress.split("\\.");
 		String result = "";
