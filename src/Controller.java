@@ -13,7 +13,6 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 
 import com.baselib.servlet.BaseServlet;
 
@@ -46,13 +45,12 @@ public class Controller extends BaseServlet{
 	@Override
 	public void getAndPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		HttpSession session = request.getSession();
 		String iPAdress = "";
 		if(request.getParameter("IPAddress") != null)
 			iPAdress = request.getParameter("IPAddress");
 		iPAdress = parseIPAddress(iPAdress);
 		String ipCity = getIPAddress(iPAdress);
-		session.setAttribute("location", ipCity);
+		request.setAttribute("location", ipCity);
 		sc.getRequestDispatcher("/WEB-INF/include/" + index).forward(request, response);
 		// TODO Auto-generated method stub
 		
