@@ -6,6 +6,9 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
@@ -13,6 +16,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.sql.DataSource;
 
 import com.baselib.servlet.BaseServlet;
 
@@ -24,9 +28,10 @@ public class Controller extends BaseServlet{
 	private static final long serialVersionUID = 1L;
 	private String index = "index.jsp";
 	private ServletContext sc = null;
-	private DBConnect db;
 	private Connection con;
-       
+	private Context initContext;
+	private Context envContext;
+    private DataSource ds;
     /**
      * @see HttpServlet#HttpServlet()
      */
@@ -44,7 +49,7 @@ public class Controller extends BaseServlet{
 	 */
 	@Override
 	public void getAndPost(HttpServletRequest request, HttpServletResponse response)
-			throws ServletException, IOException {
+			throws ServletException, IOException, NamingException, SQLException {
 		String iPAdress = "";
 		if(request.getParameter("IPAddress") != null)
 			iPAdress = request.getParameter("IPAddress");
@@ -60,10 +65,16 @@ public class Controller extends BaseServlet{
 	 * searches through the sql database to find the city and state that match the ip address
 	 * @param ipAddress ip address to search with
 	 * @return the city and state that match the ip address or if it is an invalid ip
+	 * @throws NamingException 
+	 * @throws SQLException 
 	 */
-	public String getIPAddress(String ipAddress){
-		db = new DBConnect();
-		con = db.connect();
+	public String getIPAddress(String ipAddress) throws NamingException, SQLException{
+		initContext = new InitialContext();
+		envContext  = (Context)initContext.lookup("java:/comp/env");
+		ds = (DataSource)envContext.lookup("jdbc/Geolocation");
+		con = ds.getConnection();
+		//db = new DBConnect();
+		//con = db.connect();
 		String result = "";
 		StringBuilder sb = new StringBuilder();
 		sb.append("SELECT CITY_NM, STATE_NM FROM Geolocation.GEOLOCATION " +
